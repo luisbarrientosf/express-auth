@@ -9,8 +9,14 @@
     "skipLibCheck": true
   },
   "include": [
-    "src/**/*", 
-    "prisma/generated-client/*.d.ts", 
-    "prisma/generated-client/*.js", 
+    "src/**/*",
+    "prisma/generated-client/*.d.ts",
+    "prisma/generated-client/*.js",
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "prisma/generated-client",
+    ".vscode",
   ]
 }

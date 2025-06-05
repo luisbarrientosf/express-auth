@@ -1,5 +1,4 @@
 import { UserAlreadyExistsException } from "../../domain/user/exceptions/UserAlreadyExistsException";
-import { User } from "../../domain/user/User";
 import { UserRepository } from "../../domain/user/UserRepository";
 
 export class AuthService {
@@ -8,7 +7,7 @@ export class AuthService {
   async register(email: string, password: string) {
     const existingUser = await this.userRepository.findByEmail(email);
     if (existingUser) throw new UserAlreadyExistsException();
-     return this.userRepository.create({ email, password });
+    return this.userRepository.create({ email, password });
   }
 
   // async login(email: string, password: string) {
