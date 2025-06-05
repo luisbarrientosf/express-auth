@@ -88,6 +88,26 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Get User by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/api/user/:id",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["api", "user", ":id"]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ]
 }
