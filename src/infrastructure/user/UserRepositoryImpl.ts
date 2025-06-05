@@ -1,15 +1,22 @@
 import { User } from '../../domain/user/User';
 import { UserRepository } from '../../domain/user/UserRepository';
+import prisma from '../db/prisma'; // Adjust the import path as necessary
+import { UserCreateDto } from './dto/UserCreateDto';
 
 export class UserRepositoryImpl implements UserRepository {
-  private users: User[] = [];
-
   async findByEmail(email: string): Promise<User | null> {
-    return this.users.find(u => u.email === email) || null;
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) return null;
+    return new User(user.id, user.email, user.password);
   }
 
-  async create(user: User): Promise<User> {
-    this.users.push(user);
-    return user;
+  async create(user: UserCreateDto): Promise<User> {
+    const created = await prisma.user.create({
+      data: {
+        email: user.email,
+        password: user.password,
+      },
+    });
+    return new User(created.id, created.email, created.password);
   }
 }

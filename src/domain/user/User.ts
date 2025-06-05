@@ -4,4 +4,11 @@ export class User {
     public email: string,
     public password: string // hashed
   ) {}
+
+  toJSON() {
+    return {
+      id: this.id,
+      email: this.email,
+    };
+  }
 }
