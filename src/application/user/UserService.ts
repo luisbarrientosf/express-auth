@@ -1,18 +1,19 @@
 import { UserRepository } from '../../domain/user/UserRepository';
 import { User } from '../../domain/user/User';
+import { UserNotFoundException } from '../../domain/user/exceptions/UserNotFoundException';
 
 export class UserService {
-  private userRepository: UserRepository;
+  constructor(private userRepository: UserRepository) { }
 
-  constructor(userRepository: UserRepository) {
-    this.userRepository = userRepository;
+  async findById(id: string): Promise<User> {
+    const user = await this.userRepository.findById(id);
+    if (!user) throw new UserNotFoundException();
+    return user;
   }
 
-  async findById(id: string): Promise<User | null> {
-    return this.userRepository.findById(id);
-  }
-
-  async findByEmail(email: string): Promise<User | null> {
-    return this.userRepository.findByEmail(email);
+  async findByEmail(email: string): Promise<User> {
+    const user = await this.userRepository.findByEmail(email);
+    if (!user) throw new UserNotFoundException();
+    return user;
   }
 }
