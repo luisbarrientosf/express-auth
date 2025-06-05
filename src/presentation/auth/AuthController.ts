@@ -4,7 +4,7 @@ import { UserRepositoryImpl } from '../../infrastructure/user/UserRepositoryImpl
 import { UserAlreadyExistsException } from '../../domain/user/exceptions/UserAlreadyExistsException';
 import httpStatus from 'http-status';
 
-const AuthController = {
+export const AuthController = {
   async register(req: Request, res: Response) {
     try {
       const  { email, password } = req.body;
@@ -29,5 +29,3 @@ const AuthController = {
     res.status(httpStatus.OK).json({ id: '123', email: 'user@example.com' });
   },
 };
-
-export default AuthController;

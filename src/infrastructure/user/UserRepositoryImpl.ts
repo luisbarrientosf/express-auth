@@ -1,6 +1,6 @@
 import { User } from '../../domain/user/User';
 import { UserRepository } from '../../domain/user/UserRepository';
-import prisma from '../db/prisma'; // Adjust the import path as necessary
+import prisma from '../common/prisma'; // Adjust the import path as necessary
 import { UserCreateDto } from './dto/UserCreateDto';
 
 export class UserRepositoryImpl implements UserRepository {

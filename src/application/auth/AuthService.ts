@@ -8,7 +8,7 @@ export class AuthService {
   async register(email: string, password: string) {
     const existingUser = await this.userRepository.findByEmail(email);
     if (existingUser) throw new UserAlreadyExistsException();
-    return this.userRepository.create({ email, password });
+     return this.userRepository.create({ email, password });
   }
 
   // async login(email: string, password: string) {

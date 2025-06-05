@@ -10,17 +10,7 @@
   },
   "include": [
     "src/**/*", 
-    "prisma/generated-client/client.d.ts", 
-    "prisma/generated-client/default.d.ts", 
-    "prisma/generated-client/edge.d.ts", 
-    "prisma/generated-client/index.d.ts", 
-    "prisma/generated-client/wasm.d.ts", 
-    "prisma/generated-client/runtime", 
-    "prisma/generated-client/client.js", 
-    "prisma/generated-client/default.js", 
-    "prisma/generated-client/edge.js", 
-    "prisma/generated-client/index-browser.js", 
-    "prisma/generated-client/index.js", 
-    "prisma/generated-client/wasm.js"
+    "prisma/generated-client/*.d.ts", 
+    "prisma/generated-client/*.js", 
   ]
 }
