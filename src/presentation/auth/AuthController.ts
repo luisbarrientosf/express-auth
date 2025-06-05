@@ -15,12 +15,10 @@ const AuthController = {
       res.status(httpStatus.CREATED).json(user.toJSON());
     } catch (error) {
       if (error instanceof UserAlreadyExistsException) {
-        res.status(httpStatus.CONFLICT).json(error.message);
+        res.status(httpStatus.CONFLICT).json({ message: error.message });
       } else {
         console.error(error);
-        res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ 
-          message: 'Internal server error' 
-        });
+        res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
       }
     }
   },
