@@ -7,12 +7,6 @@ import { JwtUtil } from "../../infrastructure/auth/JwtUtil";
 export class AuthService {
   constructor(private userRepository: UserRepository) { }
 
-  async register(email: string, password: string): Promise<User> {
-    const existingUser = await this.userRepository.findByEmail(email);
-    if (existingUser) throw new UserAlreadyExistsException();
-    return this.userRepository.create({ email, password });
-  }
-
   async login(email: string, password: string): Promise<string> {
     const user = await this.userRepository.findByEmail(email);
     if (!user || user.password !== password) throw new InvalidCredentialsException();
