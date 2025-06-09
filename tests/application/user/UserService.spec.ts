@@ -9,6 +9,8 @@ class MockUserRepository implements UserRepository {
   findById = jest.fn(async (id: string) => (id === '1' ? mockUser : null));
   findByEmail = jest.fn(async (email: string) => (email === 'test@example.com' ? mockUser : null));
   create = jest.fn();
+  update = jest.fn();
+  // delete = jest.fn();
 }
 
 describe('UserService', () => {

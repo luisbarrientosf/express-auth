@@ -5,6 +5,7 @@ import { UserRepositoryImpl } from '@infrastructure/user/UserRepositoryImpl';
 import { UserAlreadyExistsException } from '@domain/user/exceptions/UserAlreadyExistsException';
 import { InvalidCredentialsException } from '@domain/auth/exceptions/InvalidCredentialsException';
 import { UserService } from '@application/user/UserService';
+import { JwtUtil } from '@infrastructure/auth/JwtUtil';
 
 export const AuthController = {
   async login(req: Request, res: Response) {
@@ -41,7 +42,20 @@ export const AuthController = {
       }
     }
   },
-  // async me(req: Request, res: Response) {
-  //   res.status(httpStatus.OK).json({ id: '123', email: 'user@example.com' });
-  // },
+  async me(req: Request, res: Response) {
+    try {
+      const authHeader = req.headers['authorization'];
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(httpStatus.UNAUTHORIZED).json({ message: 'Missing or invalid Authorization header' });
+      }
+      const token = authHeader.split(' ')[1];
+      const payload = JwtUtil.verify(token);
+      if (!payload) {
+        return res.status(httpStatus.UNAUTHORIZED).json({ message: 'Invalid or expired token' });
+      }
+      res.status(httpStatus.OK).json(payload);
+    } catch {
+      res.status(httpStatus.UNAUTHORIZED).json({ message: 'Invalid or expired token' });
+    }
+  },
 };

@@ -9,4 +9,10 @@ module.exports = {
   transform: {
     ...tsJestTransformCfg,
   },
+  moduleNameMapper: {
+    '^@domain/(.*)$': '<rootDir>/src/domain/$1',
+    '^@infrastructure/(.*)$': '<rootDir>/src/infrastructure/$1',
+    '^@application/(.*)$': '<rootDir>/src/application/$1',
+    '^@presentation/(.*)$': '<rootDir>/src/presentation/$1',
+  },
 };
