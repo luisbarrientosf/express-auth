@@ -24,4 +24,10 @@ export class UserService {
     if (existingUser) throw new UserAlreadyExistsException();
     return this.userRepository.create(user);
   }
+
+  async update(id: string, data: Partial<User>): Promise<User> {
+    const updated = await this.userRepository.update(id, data);
+    if (!updated) throw new UserNotFoundException();
+    return updated;
+  }
 }

@@ -25,4 +25,15 @@ export class UserRepositoryImpl implements UserRepository {
     });
     return new User(created.id, created.email, created.password);
   }
+
+  async update(id: string, data: Partial<User>): Promise<User> {
+    const updated = await prisma.user.update({
+      where: { id },
+      data: {
+        email: data.email,
+        password: data.password,
+      },
+    });
+    return new User(updated.id, updated.email, updated.password);
+  }
 }
