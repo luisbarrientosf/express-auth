@@ -28,13 +28,14 @@ describe('UserController', () => {
         .post('/api/user')
         .send({ email: 'deleteuser@example.com', password: 'deletepass' });
       const userId = createRes.body.id;
-      // Delete the user
       expect(createRes.status).toBe(201);
       expect(createRes.body).toHaveProperty('id');
-      console.log({ userId });
+
+      // Delete the user
       const res = await request(app)
         .delete(`/api/user/${userId}`);
       expect(res.status).toBe(204);
+
       // Try to get the user
       const getRes = await request(app)
         .get(`/api/user/${userId}`);
@@ -99,7 +100,6 @@ describe('UserController', () => {
     });
     it('should return 404 if user does not exist', async () => {
       const nonExistentId = uuid();
-      console.log({ nonExistentId });
       const res = await request(app)
         .put(`/api/user/${nonExistentId}`)
         .send({ email: 'updated@example.com', password: 'updated' });
@@ -110,6 +110,40 @@ describe('UserController', () => {
       const res = await request(app)
         .put('/api/user/invalid-uuid')
         .send({ email: 'updated@example.com', password: 'updated' });
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty('errors');
+    });
+  });
+
+  describe('POST /api/user', () => {
+    it('should create a new user', async () => {
+      const res = await request(app)
+        .post('/api/user')
+        .send({ email: 'newcreateduser@example.com', password: 'password123' });
+      expect(res.status).toBe(201);
+      expect(res.body).toHaveProperty('id');
+      expect(res.body).toHaveProperty('email', 'newcreateduser@example.com');
+    });
+    it('should not allow duplicate email', async () => {
+      await request(app)
+        .post('/api/user')
+        .send({ email: 'duplicateduser@example.com', password: 'password123' });
+      const res = await request(app)
+        .post('/api/user')
+        .send({ email: 'duplicateduser@example.com', password: 'password123' });
+      expect(res.status).toBe(409);
+    });
+    it('should return 400 if email is missing', async () => {
+      const res = await request(app)
+        .post('/api/user')
+        .send({ password: 'password123' });
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty('errors');
+    });
+    it('should return 400 if password is too short', async () => {
+      const res = await request(app)
+        .post('/api/user')
+        .send({ email: 'shortpass@example.com', password: '123' });
       expect(res.status).toBe(400);
       expect(res.body).toHaveProperty('errors');
     });

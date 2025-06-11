@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { UserRepositoryImpl } from '../../infrastructure/user/UserRepositoryImpl';
 import { UserService } from '../../application/user/UserService';
 import { UserNotFoundException } from '../../domain/user/exceptions/UserNotFoundException';
+import { UserAlreadyExistsException } from '@domain/user/exceptions/UserAlreadyExistsException';
 
 export const UserController = {
   async create(req: Request, res: Response) {
@@ -12,10 +13,14 @@ export const UserController = {
       const user = await userService.create(req.body);
       res.status(httpStatus.CREATED).json(user.toJSON());
     } catch (error) {
+      if (error instanceof UserAlreadyExistsException) {
+        return res.status(httpStatus.CONFLICT).json({ message: error.message });
+      }
       console.error(error);
-      return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
+      res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
     }
   },
+
   async getById(req: Request, res: Response) {
     try {
       const userRepo = new UserRepositoryImpl();
@@ -27,7 +32,7 @@ export const UserController = {
         return res.status(httpStatus.NOT_FOUND).json({ message: error.message });
       }
       console.error(error);
-      return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
+      res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
     }
   },
 
@@ -42,7 +47,7 @@ export const UserController = {
         return res.status(httpStatus.NOT_FOUND).json({ message: error.message });
       }
       console.error(error);
-      return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
+      res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
     }
   },
 
@@ -57,7 +62,7 @@ export const UserController = {
         return res.status(httpStatus.NOT_FOUND).json({ message: error.message });
       }
       console.error(error);
-      return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
+      res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
     }
   }
 };
