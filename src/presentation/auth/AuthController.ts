@@ -6,6 +6,7 @@ import { UserAlreadyExistsException } from '@domain/user/exceptions/UserAlreadyE
 import { InvalidCredentialsException } from '@domain/auth/exceptions/InvalidCredentialsException';
 import { UserService } from '@application/user/UserService';
 import { JwtUtil } from '@infrastructure/auth/JwtUtil';
+import { InvalidJWTTokenException } from '@infrastructure/auth/exceptions/InvalidJWTTokenException';
 
 export const AuthController = {
   async login(req: Request, res: Response) {
@@ -35,11 +36,10 @@ export const AuthController = {
       res.status(httpStatus.CREATED).json(user.toJSON());
     } catch (error) {
       if (error instanceof UserAlreadyExistsException) {
-        res.status(httpStatus.CONFLICT).json({ message: error.message });
-      } else {
-        console.error(error);
-        res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
+        return res.status(httpStatus.CONFLICT).json({ message: error.message });
       }
+      console.error(error);
+      res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
     }
   },
   async me(req: Request, res: Response) {
@@ -50,11 +50,12 @@ export const AuthController = {
       }
       const token = authHeader.split(' ')[1];
       const payload = JwtUtil.verify(token);
-      if (!payload) {
-        return res.status(httpStatus.UNAUTHORIZED).json({ message: 'Invalid or expired token' });
-      }
       res.status(httpStatus.OK).json(payload);
-    } catch {
+    } catch (error) {
+      if (error instanceof InvalidJWTTokenException) {
+        return res.status(httpStatus.UNAUTHORIZED).json({ message: error.message });
+      }
+      console.error(error);
       res.status(httpStatus.UNAUTHORIZED).json({ message: 'Invalid or expired token' });
     }
   },

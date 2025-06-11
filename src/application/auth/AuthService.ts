@@ -13,8 +13,4 @@ export class AuthService {
     const token = JwtUtil.sign({ userId: user.id, email: user.email });
     return token;
   }
-
-  // async me(userId: string) {
-  //   return this.userRepository.findById(userId);
-  // }
 }

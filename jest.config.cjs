@@ -14,5 +14,12 @@ module.exports = {
     '^@infrastructure/(.*)$': '<rootDir>/src/infrastructure/$1',
     '^@application/(.*)$': '<rootDir>/src/application/$1',
     '^@presentation/(.*)$': '<rootDir>/src/presentation/$1',
+    
   },
+  testPathIgnorePatterns: [
+    "<rootDir>/prisma/"
+  ],
+  coveragePathIgnorePatterns: [
+    "<rootDir>/prisma/"
+  ]
 };
