@@ -10,7 +10,7 @@ class MockUserRepository implements UserRepository {
   findByEmail = jest.fn();
   create = jest.fn();
   update = jest.fn();
-  // delete = jest.fn();
+  delete = jest.fn();
 }
 
 describe('UserService', () => {
@@ -61,6 +61,7 @@ describe('UserService', () => {
   });
 
   it('should update a user', async () => {
+    userRepository.findById = jest.fn(async () => mockUser) as any;
     userRepository.update = jest.fn(async (id, data) => new User(id, data.email!, data.password!));
     const updated = await userService.update('1', { email: 'updated@example.com', password: 'newpass' });
     expect(updated.email).toBe('updated@example.com');
@@ -72,5 +73,21 @@ describe('UserService', () => {
     userRepository.update = jest.fn(async () => null);
     await expect(userService.update('notfound', { email: 'x', password: 'y' }))
       .rejects.toBeInstanceOf(UserNotFoundException);
+  });
+
+  it('should delete a user by id', async () => {
+    userRepository.findById = jest.fn(async () => mockUser) as any;
+    userRepository.delete = jest.fn(async () => { });
+    await expect(userService.delete('1')).resolves.toBeUndefined();
+    expect(userRepository.findById).toHaveBeenCalledWith('1');
+    expect(userRepository.delete).toHaveBeenCalledWith('1');
+  });
+
+  it('should throw UserNotFoundException if user does not exist on delete', async () => {
+    userRepository.findById = jest.fn(async () => null) as any;
+    userRepository.delete = jest.fn();
+    await expect(userService.delete('notfound')).rejects.toBeInstanceOf(UserNotFoundException);
+    expect(userRepository.findById).toHaveBeenCalledWith('notfound');
+    expect(userRepository.delete).not.toHaveBeenCalled();
   });
 });

@@ -19,15 +19,19 @@ export class UserService {
     return user;
   }
 
-  async create(user: UserCreateDto): Promise<User> {
-    const existingUser = await this.userRepository.findByEmail(user.email);
-    if (existingUser) throw new UserAlreadyExistsException();
-    return this.userRepository.create(user);
+  async create(data: UserCreateDto): Promise<User> {
+    const user = await this.userRepository.findByEmail(data.email);
+    if (user) throw new UserAlreadyExistsException();
+    return this.userRepository.create(data);
   }
 
   async update(id: string, data: Partial<User>): Promise<User> {
-    const updated = await this.userRepository.update(id, data);
-    if (!updated) throw new UserNotFoundException();
-    return updated;
+    await this.findById(id); // Ensure user exists
+    return await this.userRepository.update(id, data);
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.findById(id); // Ensure user exists
+    await this.userRepository.delete(id);
   }
 }

@@ -60,4 +60,19 @@ describe('UserRepositoryImpl', () => {
     expect(found).toBeNull();
   });
 
+  it('should delete a user by id', async () => {
+    const userCreateDto: UserCreateDto = {
+      email: 'deleteuser@example.com',
+      password: 'deletepass'
+    };
+    const created = await repo.create(userCreateDto);
+    await expect(repo.delete(created.id)).resolves.toBeUndefined();
+    const found = await repo.findById(created.id);
+    expect(found).toBeNull();
+  });
+
+  it('should throw if deleting non-existent user', async () => {
+    await expect(repo.delete('non-existent-id')).rejects.toThrow();
+  });
+
 });

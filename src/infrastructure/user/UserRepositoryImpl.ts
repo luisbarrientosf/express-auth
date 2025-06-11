@@ -36,4 +36,8 @@ export class UserRepositoryImpl implements UserRepository {
     });
     return new User(updated.id, updated.email, updated.password);
   }
+
+  async delete(id: string): Promise<void> {
+    await prisma.user.delete({ where: { id } });
+  }
 }
