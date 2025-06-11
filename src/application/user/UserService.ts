@@ -1,4 +1,4 @@
-import { UserRepository } from '@domain/user/UserRepository';
+import { UserRepository, UserPaginationParams, UserFilterParams } from '@domain/user/UserRepository';
 import { User } from '@domain/user/User';
 import { UserNotFoundException } from '@domain/user/exceptions/UserNotFoundException';
 import { UserAlreadyExistsException } from '@domain/user/exceptions/UserAlreadyExistsException';
@@ -17,6 +17,10 @@ export class UserService {
     const user = await this.userRepository.findByEmail(email);
     if (!user) throw new UserNotFoundException();
     return user;
+  }
+
+  async findAll(pagination: UserPaginationParams, filters: UserFilterParams): Promise<User[]> {
+    return this.userRepository.findAll(pagination, filters);
   }
 
   async create(data: UserCreateDto): Promise<User> {

@@ -148,4 +148,30 @@ describe('UserController', () => {
       expect(res.body).toHaveProperty('errors');
     });
   });
+
+  describe('GET /api/user', () => {
+    it('should list users paginated', async () => {
+      // Create users
+      for (let i = 0; i < 15; i++) {
+        await request(app)
+          .post('/api/user')
+          .send({ email: `user${i}@example.com`, password: 'password123' });
+      }
+      const res = await request(app)
+        .get('/api/user?page=2&pageSize=5');
+      expect(res.status).toBe(200);
+      expect(Array.isArray(res.body)).toBe(true);
+      expect(res.body.length).toBe(5);
+    });
+
+    it('should filter users by email', async () => {
+      await request(app)
+        .post('/api/user')
+        .send({ email: 'filterme@example.com', password: 'password123' });
+      const res = await request(app)
+        .get('/api/user?email=filterme');
+      expect(res.status).toBe(200);
+      expect(res.body.some((u: any) => u.email === 'filterme@example.com')).toBe(true);
+    });
+  });
 });

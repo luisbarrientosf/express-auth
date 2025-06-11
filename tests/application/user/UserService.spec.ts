@@ -1,5 +1,5 @@
 import { UserService } from '../../../src/application/user/UserService';
-import { UserRepository } from '../../../src/domain/user/UserRepository';
+import { UserRepository, UserPaginationParams, UserFilterParams } from '../../../src/domain/user/UserRepository';
 import { User } from '../../../src/domain/user/User';
 import { UserNotFoundException } from '../../../src/domain/user/exceptions/UserNotFoundException';
 
@@ -11,6 +11,7 @@ class MockUserRepository implements UserRepository {
   create = jest.fn();
   update = jest.fn();
   delete = jest.fn();
+  findAll = jest.fn(async (_pagination?: UserPaginationParams, _filters?: UserFilterParams) => []);
 }
 
 describe('UserService', () => {

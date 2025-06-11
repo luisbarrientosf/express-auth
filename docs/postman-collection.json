@@ -163,6 +163,26 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "List Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/api/user?page=1&pageSize=10&email=example",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["api", "user"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "pageSize", "value": "10" },
+                { "key": "email", "value": "example" }
+              ]
+            }
+          },
+          "response": []
         }
       ]
     }

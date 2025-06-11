@@ -1,6 +1,7 @@
+import prisma from '../common/prisma';
+import { Prisma } from '../../../prisma/generated-client';
 import { User } from '../../domain/user/User';
-import { UserRepository } from '../../domain/user/UserRepository';
-import prisma from '../common/prisma'; // Adjust the import path as necessary
+import { UserRepository, UserPaginationParams, UserFilterParams } from '../../domain/user/UserRepository';
 import { UserCreateDto } from './dto/UserCreateDto';
 
 export class UserRepositoryImpl implements UserRepository {
@@ -39,5 +40,20 @@ export class UserRepositoryImpl implements UserRepository {
 
   async delete(id: string): Promise<void> {
     await prisma.user.delete({ where: { id } });
+  }
+
+  async findAll(pagination: UserPaginationParams, filters: UserFilterParams): Promise<User[]> {
+    const { page, pageSize } = pagination;
+    const { email } = filters;
+
+    const where: Prisma.UserWhereInput = {};
+    if (email) where.email = { contains: email, mode: 'insensitive' };
+
+    const users = await prisma.user.findMany({
+      where,
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    });
+    return users.map(u => new User(u.id, u.email, u.password));
   }
 }

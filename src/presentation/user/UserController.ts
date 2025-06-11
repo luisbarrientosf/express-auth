@@ -4,6 +4,7 @@ import { UserRepositoryImpl } from '../../infrastructure/user/UserRepositoryImpl
 import { UserService } from '../../application/user/UserService';
 import { UserNotFoundException } from '../../domain/user/exceptions/UserNotFoundException';
 import { UserAlreadyExistsException } from '@domain/user/exceptions/UserAlreadyExistsException';
+import { UserFilterParams, UserPaginationParams } from '@domain/user/UserRepository';
 
 export const UserController = {
   async create(req: Request, res: Response) {
@@ -61,6 +62,25 @@ export const UserController = {
       if (error instanceof UserNotFoundException) {
         return res.status(httpStatus.NOT_FOUND).json({ message: error.message });
       }
+      console.error(error);
+      res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
+    }
+  },
+
+  async list(req: Request, res: Response) {
+    try {
+      const pagination: UserPaginationParams = { page: 1, pageSize: 10 };
+      if (req.query.page) pagination.page = Number(req.query.page);
+      if (req.query.pageSize) pagination.pageSize = Number(req.query.pageSize);
+
+      const filters: UserFilterParams = {};
+      if (req.query.email) filters.email = String(req.query.email);
+
+      const userRepo = new UserRepositoryImpl();
+      const userService = new UserService(userRepo);
+      const users = await userService.findAll(pagination, filters);
+      res.status(httpStatus.OK).json(users.map(u => u.toJSON()));
+    } catch (error) {
       console.error(error);
       res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error' });
     }
