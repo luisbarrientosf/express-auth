@@ -99,7 +99,8 @@ describe('AuthController', () => {
         .post('/api/auth/login')
         .send({ email: 'validuser@example.com', password: 'validpass123' });
       expect(res.status).toBe(200);
-      expect(res.body).toHaveProperty('token');
+      expect(res.body).toHaveProperty('accessToken');
+      expect(res.body).toHaveProperty('refreshToken');
     });
 
     it('should return 400 if email or password is missing', async () => {
@@ -114,6 +115,59 @@ describe('AuthController', () => {
         .send({ email: 'example@example.com', password: '' });
       expect(res2.status).toBe(400);
       expect(res2.body).toHaveProperty('errors');
+    });
+  });
+
+  describe('POST /api/auth/refresh', () => {
+    it('should refresh tokens with a valid refresh token', async () => {
+      // Register and login to get refresh token
+      await request(app)
+        .post('/api/auth/register')
+        .send({ email: 'refreshuser@example.com', password: 'refreshpass123' });
+      const loginRes = await request(app)
+        .post('/api/auth/login')
+        .send({ email: 'refreshuser@example.com', password: 'refreshpass123' });
+      const refreshToken = loginRes.body.refreshToken;
+      const res = await request(app)
+        .post('/api/auth/refresh')
+        .set('Authorization', `Bearer ${loginRes.body.accessToken}`)
+        .send({ refreshToken });
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty('accessToken');
+      expect(res.body).toHaveProperty('refreshToken');
+      expect(res.body.refreshToken).not.toBe(refreshToken);
+    });
+
+    it('should return 401 if refresh token is missing', async () => {
+      // Register and login to get access token
+      await request(app)
+        .post('/api/auth/register')
+        .send({ email: 'missingrefresh@example.com', password: 'refreshpass123' });
+      const loginRes = await request(app)
+        .post('/api/auth/login')
+        .send({ email: 'missingrefresh@example.com', password: 'refreshpass123' });
+      const res = await request(app)
+        .post('/api/auth/refresh')
+        .set('Authorization', `Bearer ${loginRes.body.accessToken}`)
+        .send({});
+      expect(res.status).toBe(401);
+      expect(res.body).toHaveProperty('message');
+    });
+
+    it('should return 401 if refresh token is invalid', async () => {
+      // Register and login to get access token
+      await request(app)
+        .post('/api/auth/register')
+        .send({ email: 'invalidrefresh@example.com', password: 'refreshpass123' });
+      const loginRes = await request(app)
+        .post('/api/auth/login')
+        .send({ email: 'invalidrefresh@example.com', password: 'refreshpass123' });
+      const res = await request(app)
+        .post('/api/auth/refresh')
+        .set('Authorization', `Bearer ${loginRes.body.accessToken}`)
+        .send({ refreshToken: 'invalidtoken' });
+      expect(res.status).toBe(401);
+      expect(res.body).toHaveProperty('message');
     });
   });
 });

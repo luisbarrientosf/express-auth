@@ -48,7 +48,15 @@
               "path": ["api", "auth", "login"]
             }
           },
-          "response": []
+          "response": [
+            {
+              "code": 200,
+              "body": "{\n  \"accessToken\": \"<access_token>\",\n  \"refreshToken\": \"<refresh_token>\"\n}",
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ]
+            }
+          ]
         },
         {
           "name": "Me",
@@ -66,6 +74,45 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer <accessToken>" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"<refreshToken>\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/auth/refresh",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["api", "auth", "refresh"]
+            }
+          },
+          "response": [
+            {
+              "code": 200,
+              "name": "Success",
+              "body": "{\n  \"accessToken\": \"string\",\n  \"refreshToken\": \"string\"\n}",
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ]
+            },
+            {
+              "code": 401,
+              "name": "Unauthorized",
+              "body": "{\n  \"message\": \"Invalid or missing refresh token\"\n}",
+              "header": [
+                { "key": "Content-Type", "value": "application/json" }
+              ]
+            }
+          ]
         }
       ]
     },
